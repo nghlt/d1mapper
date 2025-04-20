@@ -99,6 +99,46 @@ export class Database<T extends Record<string, any>> {
   }
 
   /**
+   * Find records matching a filter (all columns).
+   * @param filter - Partial record for WHERE clause.
+   */
+  async findMany(filter: Partial<T>): Promise<T[]>;
+
+  /**
+   * Find records matching a filter with selected properties.
+   * @param props - Column(s) to select.
+   * @param filter - Partial record for WHERE clause.
+   */
+  async findMany<K extends keyof T>(props: K | K[], filter: Partial<T>): Promise<Pick<T, K>[]>;
+
+  async findMany<K extends keyof T>(
+    propsOrFilter: K | K[] | Partial<T>,
+    filter?: Partial<T>
+  ): Promise<any[]> {
+    let columns: string;
+    let whereObj: Partial<T>;
+
+    if (filter === undefined) {
+      // only filter provided, select all columns
+      whereObj = propsOrFilter as Partial<T>;
+      columns = '*';
+    } else {
+      // props and filter provided
+      whereObj = filter;
+      columns = Array.isArray(propsOrFilter)
+        ? (propsOrFilter as K[]).join(', ')
+        : (propsOrFilter as string);
+    }
+
+    const keys = Object.keys(whereObj) as (keyof T)[];
+    const clauses = keys.map((k, i) => `${String(k)} = ?${i + 1}`).join(' AND ');
+    const query = `SELECT ${columns} FROM ${this.tableName}` + (clauses ? ` WHERE ${clauses}` : '');
+    const values = keys.map(k => whereObj[k]);
+    const { results } = await this.db.prepare(query).bind(...values).all<any>();
+    return results;
+  }
+
+  /**
    * Update records matching a condition.
    * @param record - Partial properties to update.
    * @param conditionKey - Column to filter by.
