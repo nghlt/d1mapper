@@ -1,4 +1,4 @@
-# mapper
+# d1mapper
 
 A simple ORM-like wrapper for Cloudflare D1 databases in TypeScript.
 
@@ -18,13 +18,13 @@ interface UserRow {
 ## Installation
 
 ```bash
-npm install mapper
+npm install d1mapper
 ```
 
 ## Usage
 
 ```ts
-import { Database } from 'mapper';
+import { Database } from 'd1mapper';
 import { D1Database } from '@cloudflare/workers-types';
 
 // instantiate with your full schema type
@@ -59,7 +59,7 @@ await db.delete('id', 1);
 ## Full Cloudflare Worker Example
 
 ```ts
-import { Database } from 'mapper';
+import { Database } from 'd1mapper';
 import { D1Database } from '@cloudflare/workers-types';
 
 interface UserRow {

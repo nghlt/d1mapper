@@ -1,5 +1,5 @@
 {
-  "name": "mapper",
+  "name": "d1mapper",
   "version": "0.1.0",
   "description": "A simple ORM-like wrapper for Cloudflare D1 databases in TypeScript",
   "keywords": [
@@ -8,13 +8,13 @@
     "telegram",
     "database"
   ],
-  "homepage": "https://github.com/nghlt/simpled1.git#readme",
+  "homepage": "https://github.com/nghlt/d1mapper.git#readme",
   "bugs": {
-    "url": "https://github.com/nghlt/simpled1.git/issues"
+    "url": "https://github.com/nghlt/d1mapper.git/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nghlt/simpled1.git"
+    "url": "git+https://github.com/nghlt/d1mapper.git"
   },
   "license": "MIT",
   "author": "nghlt",
