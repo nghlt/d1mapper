@@ -1,6 +1,6 @@
 {
   "name": "d1mapper",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A simple ORM-like wrapper for Cloudflare D1 databases in TypeScript",
   "keywords": [
     "cloudflare",
