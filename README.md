@@ -56,6 +56,68 @@ const has = await db.exists('id', 1);
 await db.delete('id', 1);
 ```
 
+## API Reference
+
+Here is a summary of the available methods on `Database<T>`:
+
+### insert
+- **Signature**: `insert(record: Partial<T>): Promise<DatabaseResult>`
+- **Description**: Insert a new record into the table. Merges provided fields with default properties, omitting undefined values.
+- **Parameters**:
+  - `record`: Partial object containing columns to set.
+- **Returns**: `Promise<DatabaseResult>` indicating success and number of changes.
+
+### findOne
+- **Signature**: `findOne<K extends keyof T>(props: K | K[], conditionKey: keyof T, conditionValue: T[keyof T]): Promise<Pick<T, K> | null>`
+- **Description**: Retrieve a single record matching the given condition.
+- **Parameters**:
+  - `props`: Column(s) to select.
+  - `conditionKey`: Column to filter by.
+  - `conditionValue`: Value to match.
+- **Returns**: A single record object or `null` if not found.
+
+### findAll
+- **Signature**: `findAll<K extends keyof T>(props: K | K[]): Promise<Pick<T, K>[]>`
+- **Description**: Fetch all records selecting the specified properties.
+- **Parameters**:
+  - `props`: Column(s) to select.
+- **Returns**: Array of records.
+
+### update
+- **Signature**: `update(record: Partial<T>, conditionKey: keyof T, conditionValue: T[keyof T]): Promise<DatabaseResult>`
+- **Description**: Update records that match the condition. No-op if no fields provided.
+- **Parameters**:
+  - `record`: Partial object of columns to update.
+  - `conditionKey`: Column to filter by.
+  - `conditionValue`: Value to match.
+- **Returns**: `Promise<DatabaseResult>` indicating success and number of changes.
+
+### delete
+- **Signature**: `delete(conditionKey: keyof T, conditionValue: T[keyof T]): Promise<DatabaseResult>`
+- **Description**: Delete records matching the given condition.
+- **Parameters**:
+  - `conditionKey`: Column to filter by.
+  - `conditionValue`: Value to match.
+- **Returns**: `Promise<DatabaseResult>`.
+
+### increment
+- **Signature**: `increment(column: keyof T, step: number, conditionKey: keyof T, conditionValue: T[keyof T]): Promise<DatabaseResult>`
+- **Description**: Increment a numeric column by a specified amount for matching records.
+- **Parameters**:
+  - `column`: Column to increment.
+  - `step`: Amount to add.
+  - `conditionKey`: Column to filter by.
+  - `conditionValue`: Value to match.
+- **Returns**: `Promise<DatabaseResult>`.
+
+### exists
+- **Signature**: `exists(conditionKey: keyof T, conditionValue: T[keyof T]): Promise<boolean>`
+- **Description**: Check if a record exists matching the given condition.
+- **Parameters**:
+  - `conditionKey`: Column to filter by.
+  - `conditionValue`: Value to match.
+- **Returns**: `Promise<boolean>`.
+
 ## Full Cloudflare Worker Example
 
 ```ts
