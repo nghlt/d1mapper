@@ -1,5 +1,5 @@
 {
-  "name": "simpled1",
+  "name": "mapper",
   "version": "0.1.0",
   "description": "A simple ORM-like wrapper for Cloudflare D1 databases in TypeScript",
   "keywords": [
