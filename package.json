@@ -1,0 +1,32 @@
+{
+  "name": "simpled1",
+  "version": "0.1.0",
+  "description": "A simple ORM-like wrapper for Cloudflare D1 databases in TypeScript",
+  "keywords": [
+    "cloudflare",
+    "D1",
+    "telegram",
+    "database"
+  ],
+  "homepage": "https://github.com/nghlt/simpled1.git#readme",
+  "bugs": {
+    "url": "https://github.com/nghlt/simpled1.git/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nghlt/simpled1.git"
+  },
+  "license": "MIT",
+  "author": "nghlt",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "prepare": "npm run build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@cloudflare/workers-types": "^4.0.0"
+  }
+}
