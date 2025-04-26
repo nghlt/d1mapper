@@ -52,6 +52,15 @@ await db.increment('score', 5, 'id', 1);
 // exists
 const has = await db.exists('id', 1);
 
+// find all records selecting specific columns
+const users = await db.findAll(['id', 'name', 'age']);
+
+// find many with filter only
+const adults = await db.findMany({ age: 30 });
+
+// find many selecting props and filter
+const userNames = await db.findMany(['name'], { age: 30 });
+
 // delete
 await db.delete('id', 1);
 ```
@@ -82,6 +91,15 @@ Here is a summary of the available methods on `Database<T>`:
 - **Parameters**:
   - `props`: Column(s) to select.
 - **Returns**: Array of records.
+
+### findMany
+- **Signature 1**: `findMany(filter: Partial<T>): Promise<T[]>`
+- **Signature 2**: `findMany<K extends keyof T>(props: K | K[], filter: Partial<T>): Promise<Pick<T, K>[]>`
+- **Description**: Retrieve records matching the filter. When `props` is provided, only selected columns are returned; otherwise full records are returned.
+- **Parameters**:
+  - `props` (optional): Column(s) to select.
+  - `filter`: Partial object specifying WHERE clause.
+- **Returns**: Array of matching records or selected fields.
 
 ### update
 - **Signature**: `update(record: Partial<T>, conditionKey: keyof T, conditionValue: T[keyof T]): Promise<DatabaseResult>`
