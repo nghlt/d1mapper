@@ -63,6 +63,21 @@ const userNames = await db.findMany(['name'], { age: 30 });
 
 // delete
 await db.delete('id', 1);
+
+// find by primary key
+const userById = await db.findById(['id', 'name', 'age'], 1);
+
+// update by primary key
+await db.updateById({ age: 35 }, 1);
+
+// increment by primary key
+await db.incrementById('age', 1, 1);
+
+// exists by primary key
+const hasById = await db.existsById(1);
+
+// delete by primary key
+await db.deleteById(1);
 ```
 
 ## API Reference
@@ -134,6 +149,45 @@ Here is a summary of the available methods on `Database<T>`:
 - **Parameters**:
   - `conditionKey`: Column to filter by.
   - `conditionValue`: Value to match.
+- **Returns**: `Promise<boolean>`.
+
+### findById
+- **Signature**: `findById<K extends keyof T>(props: K | K[], id: T[keyof T]): Promise<Pick<T, K> | null>`
+- **Description**: Retrieve a record by its primary key.
+- **Parameters**:
+  - `props`: Column(s) to select.
+  - `id`: Primary key value.
+- **Returns**: The matching record or `null`.
+
+### updateById
+- **Signature**: `updateById(record: Partial<T>, id: T[keyof T]): Promise<DatabaseResult>`
+- **Description**: Update record by its primary key.
+- **Parameters**:
+  - `record`: Partial properties to update.
+  - `id`: Primary key value.
+- **Returns**: `Promise<DatabaseResult>`.
+
+### deleteById
+- **Signature**: `deleteById(id: T[keyof T]): Promise<DatabaseResult>`
+- **Description**: Delete a record by its primary key.
+- **Parameters**:
+  - `id`: Primary key value.
+- **Returns**: `Promise<DatabaseResult>`.
+
+### incrementById
+- **Signature**: `incrementById(column: keyof T, step: number, id: T[keyof T]): Promise<DatabaseResult>`
+- **Description**: Increment a numeric column by its primary key.
+- **Parameters**:
+  - `column`: Column to increment.
+  - `step`: Amount to add.
+  - `id`: Primary key value.
+- **Returns**: `Promise<DatabaseResult>`.
+
+### existsById
+- **Signature**: `existsById(id: T[keyof T]): Promise<boolean>`
+- **Description**: Check if a record exists by its primary key.
+- **Parameters**:
+  - `id`: Primary key value.
 - **Returns**: `Promise<boolean>`.
 
 ## Full Cloudflare Worker Example

@@ -200,4 +200,48 @@ export class Database<T extends Record<string, any>> {
     const result = await this.db.prepare(query).bind(conditionValue).first<{ '1': number }>();
     return Boolean(result);
   }
+
+  /**
+   * Find a record by primary key.
+   * @param props - Column(s) to select.
+   * @param id - Primary key value.
+   */
+  async findById<K extends keyof T>(props: K | K[], id: T[keyof T]): Promise<Pick<T, K> | null> {
+    return this.findOne(props, this.primaryKeyName, id);
+  }
+
+  /**
+   * Update a record by primary key.
+   * @param record - Partial properties to update.
+   * @param id - Primary key value.
+   */
+  async updateById(record: Partial<T>, id: T[keyof T]): Promise<DatabaseResult> {
+    return this.update(record, this.primaryKeyName, id);
+  }
+
+  /**
+   * Delete a record by primary key.
+   * @param id - Primary key value.
+   */
+  async deleteById(id: T[keyof T]): Promise<DatabaseResult> {
+    return this.delete(this.primaryKeyName, id);
+  }
+
+  /**
+   * Increment a numeric column by primary key.
+   * @param column - Column to increment.
+   * @param step - Amount to add.
+   * @param id - Primary key value.
+   */
+  async incrementById(column: keyof T, step: number, id: T[keyof T]): Promise<DatabaseResult> {
+    return this.increment(column, step, this.primaryKeyName, id);
+  }
+
+  /**
+   * Check existence by primary key.
+   * @param id - Primary key value.
+   */
+  async existsById(id: T[keyof T]): Promise<boolean> {
+    return this.exists(this.primaryKeyName, id);
+  }
 }
