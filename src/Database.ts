@@ -81,7 +81,12 @@ export class Database<T extends Record<string, any>> {
     conditionKey: keyof T,
     conditionValue: T[keyof T]
   ): Promise<Pick<T, K> | null> {
-    const columns = Array.isArray(props) ? props.join(', ') : (props as string);
+    let columns: string;
+    if (Array.isArray(props)) {
+      columns = props.length > 0 ? props.join(', ') : '*';
+    } else {
+      columns = props as string;
+    }
     const query = `SELECT ${columns} FROM ${this.tableName} WHERE ${String(conditionKey)} = ?1 LIMIT 1`;
     return await this.db.prepare(query).bind(conditionValue).first<Pick<T, K>>();
   }
@@ -92,7 +97,12 @@ export class Database<T extends Record<string, any>> {
    * @returns Array of records with selected properties.
    */
   async findAll<K extends keyof T>(props: K | K[]): Promise<Pick<T, K>[]> {
-    const columns = Array.isArray(props) ? props.join(', ') : (props as string);
+    let columns: string;
+    if (Array.isArray(props)) {
+      columns = props.length > 0 ? props.join(', ') : '*';
+    } else {
+      columns = props as string;
+    }
     const query = `SELECT ${columns} FROM ${this.tableName}`;
     const { results } = await this.db.prepare(query).all<Pick<T, K>>();
     return results;
@@ -125,9 +135,14 @@ export class Database<T extends Record<string, any>> {
     } else {
       // props and filter provided
       whereObj = filter;
-      columns = Array.isArray(propsOrFilter)
-        ? (propsOrFilter as K[]).join(', ')
-        : (propsOrFilter as string);
+      if (Array.isArray(propsOrFilter)) {
+        // if empty props array, select all columns
+        columns = (propsOrFilter as K[]).length > 0
+          ? (propsOrFilter as K[]).join(', ')
+          : '*';
+      } else {
+        columns = propsOrFilter as string;
+      }
     }
 
     const keys = Object.keys(whereObj) as (keyof T)[];

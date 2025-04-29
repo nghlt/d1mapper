@@ -78,7 +78,6 @@ const hasById = await db.existsById(1);
 
 // delete by primary key
 await db.deleteById(1);
-```
 
 ## API Reference
 
@@ -95,7 +94,7 @@ Here is a summary of the available methods on `Database<T>`:
 - **Signature**: `findOne<K extends keyof T>(props: K | K[], conditionKey: keyof T, conditionValue: T[keyof T]): Promise<Pick<T, K> | null>`
 - **Description**: Retrieve a single record matching the given condition.
 - **Parameters**:
-  - `props`: Column(s) to select.
+  - `props`: Column(s) to select. Pass `[]` to select all columns.
   - `conditionKey`: Column to filter by.
   - `conditionValue`: Value to match.
 - **Returns**: A single record object or `null` if not found.
@@ -104,7 +103,7 @@ Here is a summary of the available methods on `Database<T>`:
 - **Signature**: `findAll<K extends keyof T>(props: K | K[]): Promise<Pick<T, K>[]>`
 - **Description**: Fetch all records selecting the specified properties.
 - **Parameters**:
-  - `props`: Column(s) to select.
+  - `props`: Column(s) to select. Pass `[]` to select all columns.
 - **Returns**: Array of records.
 
 ### findMany
@@ -112,7 +111,7 @@ Here is a summary of the available methods on `Database<T>`:
 - **Signature 2**: `findMany<K extends keyof T>(props: K | K[], filter: Partial<T>): Promise<Pick<T, K>[]>`
 - **Description**: Retrieve records matching the filter. When `props` is provided, only selected columns are returned; otherwise full records are returned.
 - **Parameters**:
-  - `props` (optional): Column(s) to select.
+  - `props` (optional): Column(s) to select. Pass `[]` to select all columns.
   - `filter`: Partial object specifying WHERE clause.
 - **Returns**: Array of matching records or selected fields.
 
