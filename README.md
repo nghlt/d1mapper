@@ -81,6 +81,15 @@ await db.deleteById(1);
 
 ## API Reference
 
+Types and Properties:
+
+- `DatabaseResult`: Object containing `success` and `changes` properties.
+- `Database<T>`: The main class for interacting with the database.
+- `this.db`: The D1Database instance.
+- `this.tableName`: The name of the table.
+- `this.primaryKeyName`: The name of the primary key column.
+- `this.defaultProperties`: The default properties for the table.
+
 Here is a summary of the available methods on `Database<T>`:
 
 ### insert
@@ -91,7 +100,7 @@ Here is a summary of the available methods on `Database<T>`:
 - **Returns**: `Promise<DatabaseResult>` indicating success and number of changes.
 
 ### findOne
-- **Signature**: `findOne<K extends keyof T>(props: K | K[], conditionKey: keyof T, conditionValue: T[keyof T]): Promise<Pick<T, K> | null>`
+- **Signature**: `findOne<K extends keyof T>(props: K | K[], conditionKey: keyof T, conditionValue: T[keyof T]): Promise<(Pick<T, K> | T)| null>`
 - **Description**: Retrieve a single record matching the given condition.
 - **Parameters**:
   - `props`: Column(s) to select. Pass `[]` to select all columns.
@@ -100,7 +109,7 @@ Here is a summary of the available methods on `Database<T>`:
 - **Returns**: A single record object or `null` if not found.
 
 ### findAll
-- **Signature**: `findAll<K extends keyof T>(props: K | K[]): Promise<Pick<T, K>[]>`
+- **Signature**: `findAll<K extends keyof T>(props: K | K[]): Promise<(Pick<T, K> | T)[]>`
 - **Description**: Fetch all records selecting the specified properties.
 - **Parameters**:
   - `props`: Column(s) to select. Pass `[]` to select all columns.
@@ -108,7 +117,7 @@ Here is a summary of the available methods on `Database<T>`:
 
 ### findMany
 - **Signature 1**: `findMany(filter: Partial<T>): Promise<T[]>`
-- **Signature 2**: `findMany<K extends keyof T>(props: K | K[], filter: Partial<T>): Promise<Pick<T, K>[]>`
+- **Signature 2**: `findMany<K extends keyof T>(props: K | K[], filter: Partial<T>): Promise<(Pick<T, K> | T)[]>`
 - **Description**: Retrieve records matching the filter. When `props` is provided, only selected columns are returned; otherwise full records are returned.
 - **Parameters**:
   - `props` (optional): Column(s) to select. Pass `[]` to select all columns.
@@ -151,7 +160,7 @@ Here is a summary of the available methods on `Database<T>`:
 - **Returns**: `Promise<boolean>`.
 
 ### findById
-- **Signature**: `findById<K extends keyof T>(props: K | K[], id: T[keyof T]): Promise<Pick<T, K> | null>`
+- **Signature**: `findById<K extends keyof T>(props: K | K[], id: T[keyof T]): Promise<(Pick<T, K> | T) | null>`
 - **Description**: Retrieve a record by its primary key.
 - **Parameters**:
   - `props`: Column(s) to select.

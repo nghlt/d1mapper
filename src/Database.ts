@@ -233,11 +233,19 @@ export class Database<T extends Record<string, any>> {
   }
 
   /**
-   * Find a record by primary key.
-   * @param props - Column(s) to select.
+   * Find a record by primary key returning full record.
+   * @param props - An empty array to select all columns.
    * @param id - Primary key value.
    */
-  async findById<K extends keyof T>(props: K | K[], id: T[keyof T]): Promise<Pick<T, K> | null> {
+  async findById<K extends keyof T>(props: [], id: T[keyof T]): Promise<T | null>;
+  /**
+     * Find a record by primary key.
+     * @param props - Column(s) to select.
+     * @param id - Primary key value.
+     */
+  async findById<K extends keyof T>(props: K | K[], id: T[keyof T]): Promise<Pick<T, K> | null>
+
+  async findById<K extends keyof T>(props: K | K[], id: T[keyof T]): Promise<any> {
     return this.findOne(props, this.primaryKeyName, id);
   }
 
