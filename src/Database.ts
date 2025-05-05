@@ -68,19 +68,39 @@ export class Database<T extends Record<string, any>> {
     const query = `INSERT INTO ${this.tableName} (${keys.join(', ')}) VALUES (${placeholders})`;
     return this.exec(query, values as any[]);
   }
-
   /**
-   * Find one record matching a condition.
+   * Find one record matching a condition and return the full record.
+   * 
+   * @param props - An empty array indicating all columns should be selected (`SELECT *`).
+   * @param conditionKey - Column to filter by.
+   * @param conditionValue - Value to match.
+   * @returns The full record (`T`) if found, or null.
+   */
+  async findOne(
+    props: [],
+    conditionKey: keyof T,
+    conditionValue: T[keyof T]
+  ): Promise<T | null>;
+  /**
+   * Find one record matching a condition and select specific columns.
+   * 
    * @param props - Column(s) to select.
    * @param conditionKey - Column to filter by.
    * @param conditionValue - Value to match.
-   * @returns A single record or null.
+   * @returns The record with selected properties if found, or null.
    */
   async findOne<K extends keyof T>(
     props: K | K[],
     conditionKey: keyof T,
     conditionValue: T[keyof T]
-  ): Promise<Pick<T, K> | null> {
+  ): Promise<Pick<T, K> | null>;
+
+
+  async findOne<K extends keyof T>(
+    props: K | K[] | [],
+    conditionKey: keyof T,
+    conditionValue: T[keyof T]
+  ): Promise<any> {
     let columns: string;
     if (Array.isArray(props)) {
       columns = props.length > 0 ? props.join(', ') : '*';
@@ -90,13 +110,21 @@ export class Database<T extends Record<string, any>> {
     const query = `SELECT ${columns} FROM ${this.tableName} WHERE ${String(conditionKey)} = ?1 LIMIT 1`;
     return await this.db.prepare(query).bind(conditionValue).first<Pick<T, K>>();
   }
-
   /**
-   * Retrieve all records selecting specified properties.
+   * Retrieve all records with all columns.
+   * 
+   * @param props - An empty array indicating all columns should be selected (`SELECT *`).
+   * @returns Array of full records (`T[]`).
+   */
+  async findAll(props: []): Promise<T[]>;
+  /**
+   * Retrieve all records with selected properties.
+   * 
    * @param props - Column(s) to select.
    * @returns Array of records with selected properties.
    */
-  async findAll<K extends keyof T>(props: K | K[]): Promise<Pick<T, K>[]> {
+  async findAll<K extends keyof T>(props: K | K[]): Promise<Pick<T, K>[]>;
+  async findAll<K extends keyof T>(props: K | K[] | []): Promise<any[]> {
     let columns: string;
     if (Array.isArray(props)) {
       columns = props.length > 0 ? props.join(', ') : '*';
@@ -104,15 +132,16 @@ export class Database<T extends Record<string, any>> {
       columns = props as string;
     }
     const query = `SELECT ${columns} FROM ${this.tableName}`;
-    const { results } = await this.db.prepare(query).all<Pick<T, K>>();
+    const { results } = await this.db.prepare(query).all<any>();
     return results;
   }
 
   /**
    * Find records matching a filter (all columns).
+   * @param props - An empty array indicating all columns should be selected (`SELECT *`).
    * @param filter - Partial record for WHERE clause.
    */
-  async findMany(filter: Partial<T>): Promise<T[]>;
+  async findMany(props: [], filter: Partial<T>): Promise<T[]>;
 
   /**
    * Find records matching a filter with selected properties.
@@ -122,33 +151,20 @@ export class Database<T extends Record<string, any>> {
   async findMany<K extends keyof T>(props: K | K[], filter: Partial<T>): Promise<Pick<T, K>[]>;
 
   async findMany<K extends keyof T>(
-    propsOrFilter: K | K[] | Partial<T>,
-    filter?: Partial<T>
+    props: K | K[] | [],
+    filter: Partial<T>
   ): Promise<any[]> {
     let columns: string;
-    let whereObj: Partial<T>;
 
-    if (filter === undefined) {
-      // only filter provided, select all columns
-      whereObj = propsOrFilter as Partial<T>;
-      columns = '*';
+    if (Array.isArray(props)) {
+      columns = props.length > 0 ? props.join(', ') : '*';
     } else {
-      // props and filter provided
-      whereObj = filter;
-      if (Array.isArray(propsOrFilter)) {
-        // if empty props array, select all columns
-        columns = (propsOrFilter as K[]).length > 0
-          ? (propsOrFilter as K[]).join(', ')
-          : '*';
-      } else {
-        columns = propsOrFilter as string;
-      }
+      columns = props as string;
     }
-
-    const keys = Object.keys(whereObj) as (keyof T)[];
+    const keys = Object.keys(filter) as (keyof T)[];
     const clauses = keys.map((k, i) => `${String(k)} = ?${i + 1}`).join(' AND ');
     const query = `SELECT ${columns} FROM ${this.tableName}` + (clauses ? ` WHERE ${clauses}` : '');
-    const values = keys.map(k => whereObj[k]);
+    const values = keys.map(k => filter[k]);
     const { results } = await this.db.prepare(query).bind(...values).all<any>();
     return results;
   }
